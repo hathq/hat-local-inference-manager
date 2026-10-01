@@ -1,0 +1,570 @@
+{
+  "schema": "hathq://hat/package/v2",
+  "package_id": "hat/local-inference-manager",
+  "repository_id": "hat-local-inference-manager",
+  "version": "0.10.0",
+  "specification_version": "0.10.0",
+  "manifest": {
+    "schema": "hathq://hat/manifest/v1",
+    "id": "hat/local-inference-manager",
+    "name": "Local Inference Manager",
+    "version": "0.10.0",
+    "capabilities": [
+      "local-inference-resource-inspection",
+      "verified-local-model-lifecycle",
+      "local-inference-runtime-registration"
+    ],
+    "decision_boundaries": [
+      "execute-exact-local-inference-owner-action"
+    ],
+    "input_classifications": [
+      "internal",
+      "internal-confidential"
+    ],
+    "output_classification": "internal",
+    "permissions": [
+      {
+        "resource": "local-inference-catalog",
+        "operations": [
+          "inspect-metadata"
+        ],
+        "mode": "observe"
+      },
+      {
+        "resource": "local-model-acquisition",
+        "operations": [
+          "propose-scenario"
+        ],
+        "mode": "propose"
+      },
+      {
+        "resource": "local-model-artifact",
+        "operations": [
+          "dispatch-operation"
+        ],
+        "mode": "execute"
+      },
+      {
+        "resource": "local-inference-runtime",
+        "operations": [
+          "dispatch-operation"
+        ],
+        "mode": "execute"
+      }
+    ]
+  },
+  "information_surfaces": [
+    {
+      "id": "local-models",
+      "canonical_type": "system.inference.model",
+      "projection_schema": "hathq://hat-local-inference-manager/local-model/v1",
+      "data_domain_term_id": "hathq://vocabulary/data-domain/ecosystem-operations/v1",
+      "subject_relation": "managed",
+      "semantic_icon": "model"
+    },
+    {
+      "id": "local-inference-runtimes",
+      "canonical_type": "system.inference.runtime",
+      "projection_schema": "hathq://hat-local-inference-manager/runtime/v1",
+      "data_domain_term_id": "hathq://vocabulary/data-domain/ecosystem-operations/v1",
+      "subject_relation": "managed",
+      "semantic_icon": "service"
+    }
+  ],
+  "operations": [
+    {
+      "id": "hathq://vocabulary/action/inspect-local-inference-resources/v1",
+      "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+      "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1",
+      "context_plan": {
+        "id": "inspect-local-inference-context",
+        "selectors": [
+          {
+            "namespace": "local-inference-placement",
+            "projection_schema": "hathq://hat-local-inference-manager/placement/v1",
+            "required": false
+          }
+        ],
+        "unresolved_policy": "record-unresolved"
+      },
+      "reducer": {
+        "id": "inspect-local-inference-reducer",
+        "strategy": "typed-domain-event",
+        "event_schema": "hathq://hat-local-inference-manager/resource-event/v1",
+        "projection_schema": "hathq://hat-local-inference-manager/resource-projection/v1",
+        "conflict_policy": "reject"
+      },
+      "procedure": {
+        "id": "inspect-local-inference-procedure",
+        "steps": [
+          {
+            "action_id": "hathq://vocabulary/action/inspect-local-inference-resources/v1",
+            "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+            "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1"
+          }
+        ]
+      },
+      "handler": {
+        "kind": "hat-service",
+        "reference": "hat-local-inference-manager"
+      }
+    },
+    {
+      "id": "hathq://vocabulary/action/prepare-local-model-acquisition/v1",
+      "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+      "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1",
+      "context_plan": {
+        "id": "prepare-local-model-context",
+        "selectors": [
+          {
+            "namespace": "local-inference-placement",
+            "projection_schema": "hathq://hat-local-inference-manager/placement/v1",
+            "required": false
+          }
+        ],
+        "unresolved_policy": "record-unresolved"
+      },
+      "reducer": {
+        "id": "prepare-local-model-reducer",
+        "strategy": "typed-domain-event",
+        "event_schema": "hathq://hat-local-inference-manager/resource-event/v1",
+        "projection_schema": "hathq://hat-local-inference-manager/resource-projection/v1",
+        "conflict_policy": "reject"
+      },
+      "procedure": {
+        "id": "prepare-local-model-procedure",
+        "steps": [
+          {
+            "action_id": "hathq://vocabulary/action/prepare-local-model-acquisition/v1",
+            "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+            "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1"
+          }
+        ]
+      },
+      "handler": {
+        "kind": "hat-service",
+        "reference": "hat-local-inference-manager"
+      }
+    },
+    {
+      "id": "hathq://vocabulary/action/install-local-model/v1",
+      "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+      "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1",
+      "context_plan": {
+        "id": "install-local-model-context",
+        "selectors": [
+          {
+            "namespace": "local-inference-placement",
+            "projection_schema": "hathq://hat-local-inference-manager/placement/v1",
+            "required": false
+          }
+        ],
+        "unresolved_policy": "record-unresolved"
+      },
+      "reducer": {
+        "id": "install-local-model-reducer",
+        "strategy": "typed-domain-event",
+        "event_schema": "hathq://hat-local-inference-manager/resource-event/v1",
+        "projection_schema": "hathq://hat-local-inference-manager/resource-projection/v1",
+        "conflict_policy": "reject"
+      },
+      "procedure": {
+        "id": "install-local-model-procedure",
+        "steps": [
+          {
+            "action_id": "hathq://vocabulary/action/install-local-model/v1",
+            "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+            "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1"
+          }
+        ]
+      },
+      "handler": {
+        "kind": "hat-service",
+        "reference": "hat-local-inference-manager"
+      },
+      "effects": [
+        {
+          "kind": "create",
+          "surface_id": "local-models"
+        }
+      ]
+    },
+    {
+      "id": "hathq://vocabulary/action/remove-local-model/v1",
+      "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+      "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1",
+      "context_plan": {
+        "id": "remove-local-model-context",
+        "selectors": [
+          {
+            "namespace": "local-inference-placement",
+            "projection_schema": "hathq://hat-local-inference-manager/placement/v1",
+            "required": false
+          }
+        ],
+        "unresolved_policy": "record-unresolved"
+      },
+      "reducer": {
+        "id": "remove-local-model-reducer",
+        "strategy": "typed-domain-event",
+        "event_schema": "hathq://hat-local-inference-manager/resource-event/v1",
+        "projection_schema": "hathq://hat-local-inference-manager/resource-projection/v1",
+        "conflict_policy": "reject"
+      },
+      "procedure": {
+        "id": "remove-local-model-procedure",
+        "steps": [
+          {
+            "action_id": "hathq://vocabulary/action/remove-local-model/v1",
+            "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+            "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1"
+          }
+        ]
+      },
+      "handler": {
+        "kind": "hat-service",
+        "reference": "hat-local-inference-manager"
+      },
+      "effects": [
+        {
+          "kind": "update",
+          "surface_id": "local-models"
+        }
+      ]
+    },
+    {
+      "id": "hathq://vocabulary/action/register-local-inference-runtime/v1",
+      "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+      "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1",
+      "context_plan": {
+        "id": "register-local-runtime-context",
+        "selectors": [
+          {
+            "namespace": "local-inference-placement",
+            "projection_schema": "hathq://hat-local-inference-manager/placement/v1",
+            "required": false
+          }
+        ],
+        "unresolved_policy": "record-unresolved"
+      },
+      "reducer": {
+        "id": "register-local-runtime-reducer",
+        "strategy": "typed-domain-event",
+        "event_schema": "hathq://hat-local-inference-manager/resource-event/v1",
+        "projection_schema": "hathq://hat-local-inference-manager/resource-projection/v1",
+        "conflict_policy": "reject"
+      },
+      "procedure": {
+        "id": "register-local-runtime-procedure",
+        "steps": [
+          {
+            "action_id": "hathq://vocabulary/action/register-local-inference-runtime/v1",
+            "input_schema": "hathq://hat-local-inference-manager/action-request/v1",
+            "output_schema": "hathq://hat-local-inference-manager/action-receipt/v1"
+          }
+        ]
+      },
+      "handler": {
+        "kind": "hat-service",
+        "reference": "hat-local-inference-manager"
+      },
+      "effects": [
+        {
+          "kind": "create",
+          "surface_id": "local-inference-runtimes"
+        }
+      ]
+    }
+  ],
+  "catalog": {
+    "schema": "hathq://hat/semantic-catalog/v1",
+    "identity": {
+      "catalog_id": "hat-local-inference-manager",
+      "version": 1,
+      "digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57"
+    },
+    "owner_repository_id": "hat-local-inference-manager",
+    "foundation": false,
+    "dependencies": [
+      {
+        "catalog_id": "hathq.foundation",
+        "version": 1,
+        "digest_sha256": "6b618dff030e551bafd6b1a70fe6daf71e2873de9c2230f4cf71e9ac9fbf2c0f"
+      }
+    ],
+    "incompatibilities": [],
+    "terms": [
+      {
+        "reference": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/entity/local-model-artifact/v1",
+          "version": 1,
+          "definition_digest_sha256": "e225a88b70de2c42691c7c9513de3996eeebcdf07aa326e8270c1c3430c8e1fe",
+          "kind": "entity-type"
+        },
+        "wire_schema": "hathq://hat-local-inference-manager/local-model/v1",
+        "semantic_icon": "model",
+        "dependencies": [],
+        "is_a": [],
+        "domain": [],
+        "range": []
+      },
+      {
+        "reference": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/entity/local-inference-runtime/v1",
+          "version": 1,
+          "definition_digest_sha256": "d5c7f5ef8710da2c87e2b7917f7527a12ee573bfcdb5312a13e046e12d071c36",
+          "kind": "entity-type"
+        },
+        "wire_schema": "hathq://hat-local-inference-manager/runtime/v1",
+        "semantic_icon": "service",
+        "dependencies": [],
+        "is_a": [],
+        "domain": [],
+        "range": []
+      },
+      {
+        "reference": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/inspect-local-inference-resources/v1",
+          "version": 1,
+          "definition_digest_sha256": "5eb804ccdf37eae2386677e58a36a2808866c6e4c4d4cf42ff713656a6f47eb7",
+          "kind": "action"
+        },
+        "wire_schema": "hathq://hat-local-inference-manager/action-request/v1",
+        "semantic_icon": "action",
+        "dependencies": [],
+        "is_a": [],
+        "domain": [],
+        "range": []
+      },
+      {
+        "reference": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/prepare-local-model-acquisition/v1",
+          "version": 1,
+          "definition_digest_sha256": "6170cb7d9c9facc186cf1ed54387e2d8feb36571829f00311b103f5e963673ce",
+          "kind": "action"
+        },
+        "wire_schema": "hathq://hat-local-inference-manager/action-request/v1",
+        "semantic_icon": "action",
+        "dependencies": [],
+        "is_a": [],
+        "domain": [],
+        "range": []
+      },
+      {
+        "reference": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/install-local-model/v1",
+          "version": 1,
+          "definition_digest_sha256": "28602294847d3b01ce27ab339084c038fa930bfb3bf98ba8e26bdcfdf2335478",
+          "kind": "action"
+        },
+        "wire_schema": "hathq://hat-local-inference-manager/action-request/v1",
+        "semantic_icon": "action",
+        "dependencies": [],
+        "is_a": [],
+        "domain": [],
+        "range": []
+      },
+      {
+        "reference": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/remove-local-model/v1",
+          "version": 1,
+          "definition_digest_sha256": "838121bdb114012e3dcd1d99e31017372b8c200b2e45707e3dda9b1b931ae9f1",
+          "kind": "action"
+        },
+        "wire_schema": "hathq://hat-local-inference-manager/action-request/v1",
+        "semantic_icon": "action",
+        "dependencies": [],
+        "is_a": [],
+        "domain": [],
+        "range": []
+      },
+      {
+        "reference": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/register-local-inference-runtime/v1",
+          "version": 1,
+          "definition_digest_sha256": "913bda8bdee3a6170ac2f96efed03bc590c08fd2de6d0f0e3b53032682c8f53c",
+          "kind": "action"
+        },
+        "wire_schema": "hathq://hat-local-inference-manager/action-request/v1",
+        "semantic_icon": "action",
+        "dependencies": [],
+        "is_a": [],
+        "domain": [],
+        "range": []
+      },
+      {
+        "reference": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/event/local-inference-resource-changed/v1",
+          "version": 1,
+          "definition_digest_sha256": "292e79b48c8dc8458989379230321776bee0c8d9228e2bae80b7ae260a4839b5",
+          "kind": "event-type"
+        },
+        "wire_schema": "hathq://hat-local-inference-manager/action-receipt/v1",
+        "semantic_icon": "event",
+        "dependencies": [],
+        "is_a": [],
+        "domain": [],
+        "range": []
+      }
+    ],
+    "lexicalizations": [],
+    "frames": [
+      {
+        "frame_id": "inspect-local-inference-procedure-frame",
+        "definition_digest_sha256": "c4af0494600c0af39e618b173b05d0ed89c878f34f2b647e19e91ad4b56e42b7",
+        "predicate": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/inspect-local-inference-resources/v1",
+          "version": 1,
+          "definition_digest_sha256": "5eb804ccdf37eae2386677e58a36a2808866c6e4c4d4cf42ff713656a6f47eb7",
+          "kind": "action"
+        },
+        "roles": [
+          {
+            "role": "actor",
+            "required": true,
+            "accepted_kinds": [
+              "entity-type"
+            ]
+          },
+          {
+            "role": "object",
+            "required": true,
+            "accepted_kinds": [
+              "concept"
+            ]
+          }
+        ]
+      },
+      {
+        "frame_id": "prepare-local-model-procedure-frame",
+        "definition_digest_sha256": "cf806a5d7e8bd8099121605b90cc733b1723f4fb81d1bae1ccda5117f471c154",
+        "predicate": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/prepare-local-model-acquisition/v1",
+          "version": 1,
+          "definition_digest_sha256": "6170cb7d9c9facc186cf1ed54387e2d8feb36571829f00311b103f5e963673ce",
+          "kind": "action"
+        },
+        "roles": [
+          {
+            "role": "actor",
+            "required": true,
+            "accepted_kinds": [
+              "entity-type"
+            ]
+          },
+          {
+            "role": "object",
+            "required": true,
+            "accepted_kinds": [
+              "concept"
+            ]
+          }
+        ]
+      },
+      {
+        "frame_id": "install-local-model-procedure-frame",
+        "definition_digest_sha256": "777b8acbd0a722289065ecd445e48bf685fe579664faf8a8e433c12ae423cc81",
+        "predicate": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/install-local-model/v1",
+          "version": 1,
+          "definition_digest_sha256": "28602294847d3b01ce27ab339084c038fa930bfb3bf98ba8e26bdcfdf2335478",
+          "kind": "action"
+        },
+        "roles": [
+          {
+            "role": "actor",
+            "required": true,
+            "accepted_kinds": [
+              "entity-type"
+            ]
+          },
+          {
+            "role": "object",
+            "required": true,
+            "accepted_kinds": [
+              "concept"
+            ]
+          }
+        ]
+      },
+      {
+        "frame_id": "remove-local-model-procedure-frame",
+        "definition_digest_sha256": "9fb5268297549e40deb65b3204f8e7e95f412a45e25f714b1d17f7c565eeeee0",
+        "predicate": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/remove-local-model/v1",
+          "version": 1,
+          "definition_digest_sha256": "838121bdb114012e3dcd1d99e31017372b8c200b2e45707e3dda9b1b931ae9f1",
+          "kind": "action"
+        },
+        "roles": [
+          {
+            "role": "actor",
+            "required": true,
+            "accepted_kinds": [
+              "entity-type"
+            ]
+          },
+          {
+            "role": "object",
+            "required": true,
+            "accepted_kinds": [
+              "concept"
+            ]
+          }
+        ]
+      },
+      {
+        "frame_id": "register-local-runtime-procedure-frame",
+        "definition_digest_sha256": "7748af5c8f170907b1c8e7da51fd0004441a2b950a358e242e01668649691061",
+        "predicate": {
+          "catalog_id": "hat-local-inference-manager",
+          "catalog_digest_sha256": "aca1474ae8d3d67288db43cdb4a7add6d335b9e63f00114e33ad6d5b18521e57",
+          "term_id": "hathq://vocabulary/action/register-local-inference-runtime/v1",
+          "version": 1,
+          "definition_digest_sha256": "913bda8bdee3a6170ac2f96efed03bc590c08fd2de6d0f0e3b53032682c8f53c",
+          "kind": "action"
+        },
+        "roles": [
+          {
+            "role": "actor",
+            "required": true,
+            "accepted_kinds": [
+              "entity-type"
+            ]
+          },
+          {
+            "role": "object",
+            "required": true,
+            "accepted_kinds": [
+              "concept"
+            ]
+          }
+        ]
+      }
+    ]
+  }
+}
