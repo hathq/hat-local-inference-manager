@@ -1,23 +1,30 @@
-# Local Inference Manager HAT
+# hat-local-inference-manager
 
-An optional HAT exposing local model-resource operations through the common HAT
-invocation boundary. Zixcel owns model catalogs, artifact validation and runtime
-operations; Crowsi owns delivery and authorized egress. This HAT does not own the
-language, user credentials, model weights or provider implementation.
+Request local model-resource operations through a bounded role invocation.
 
-`hat-local-inference-manager-worker` accepts exact binding, placement and state
-arguments. Its supervisor owns the process lock, bounded worker concurrency,
-heartbeat and shutdown. Role count does not imply one model process per role.
+## What you can do
 
-## Acceptance
+- Validate model-operation bindings and placements.
+- Coordinate worker lifecycle through the declared supervisor.
 
-- Exact request, artifact digest, operation and binding must match.
-- A real model must be acquired, started, used and stopped through the released
-  consumer before deployment is marked verified. The Zixcel small-data demo is
-  not model-execution evidence.
-- Cancellation, lease expiry, concurrent invocations and restart must not leave
-  orphan processes, duplicate effects or an incorrect completed state.
-- Missing delivery/runtime configuration remains an explicit unavailable result.
+## Current scope
 
-Use the owner-local registry configuration for `cargo test --locked --offline`.
-Do not use cross-repository source patches to satisfy missing artifacts.
+A real model must be acquired, used and stopped before production readiness is claimed. Small-data demonstrations are not model-execution evidence.
+
+Package distribution is not activated by this documentation. Use the checked-in source and the declared dependency versions; published availability must be verified separately.
+
+## Getting started
+
+Install Rust 1.97 or newer and make the declared dependencies available. Use the configured private registry when a dependency is not distributed publicly. Run from this repository:
+
+```sh
+cargo test --locked
+```
+
+## Documentation and source
+
+[Interface reference](docs/interface-reference.md)
+
+[Usage guide](docs/getting-started.md)
+
+[Implementation and public interfaces](src) · [Verification cases](tests) · [Contributing](CONTRIBUTING.md) · [Security reporting](SECURITY.md) · [License](LICENSE) · [Attribution notices](NOTICE)
