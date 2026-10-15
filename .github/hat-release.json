@@ -1,0 +1,6 @@
+{
+  "repository": "hathq/hat-local-inference-manager",
+  "github_id": 1400279102,
+  "package_id": "hat/local-inference-manager",
+  "binary": "hat-local-inference-manager-worker"
+}
