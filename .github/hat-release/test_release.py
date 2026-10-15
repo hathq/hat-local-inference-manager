@@ -40,7 +40,7 @@ class ReleaseBoundaries(unittest.TestCase):
             with self.assertRaises(ValueError): publish.admit(identity,changed,environment,policy,'a'*40,'a'*40,runs)
         for changed in [{**environment,'protection_rules':[]},{**environment,'deployment_branch_policy':{'custom_branch_policies':False}}]:
             with self.assertRaises(ValueError): publish.admit(identity,event,changed,policy,'a'*40,'a'*40,runs)
-        for head, main, outcomes in [('b'*40,'a'*40,runs),('a'*40,'a'*40,[]),('a'*40,'a'*40,[{**runs[0],'conclusion':'failure'}])]:
+        for head, main, outcomes in [('b'*40,'a'*40,runs),('a'*40,'a'*40,[]),('a'*40,'a'*40,[{**runs[0],'conclusion':'failure'}]),('a'*40,'a'*40,runs+[{**runs[0],'conclusion':'failure'}]),('a'*40,'a'*40,runs+[{**runs[0],'conclusion':None}])]:
             with self.assertRaises(ValueError): publish.admit(identity,event,environment,policy,head,main,outcomes)
 
 

@@ -24,7 +24,8 @@ def admit(identity, event, environment, policies, head, main, runs):
     require(review.get('reviewers'), 'native reviewer protection is required')
     require(environment['deployment_branch_policy']['custom_branch_policies'] is True)
     require(any(p['type'] == 'tag' and p['name'] == 'hat/v*' for p in policies['branch_policies']))
-    require(any(r['head_sha'] == head and r['event'] == 'push' and r['head_branch'] == 'main' and r['conclusion'] == 'success' for r in runs), 'successful main CI is required')
+    matching = [r for r in runs if r['head_sha'] == head and r['event'] == 'push' and r['head_branch'] == 'main']
+    require(matching and all(r['conclusion'] == 'success' for r in matching), 'every observed main push workflow must succeed')
 
 
 if __name__ == '__main__':

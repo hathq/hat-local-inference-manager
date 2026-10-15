@@ -24,6 +24,7 @@ jobs:
           fetch-depth: 0
           persist-credentials: false
       - run: python3 .github/hat-release/test_release.py
+      - run: python3 .github/oss-policy-check.py
       - run: rustup toolchain install 1.97.1 --profile minimal
       - run: cargo +1.97.1 test --locked --all-targets
       - run: cargo +1.97.1 build --locked --release --bins
