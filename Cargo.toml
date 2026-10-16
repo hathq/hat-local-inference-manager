@@ -25,3 +25,7 @@ unsafe_code = "forbid"
 [lints.clippy]
 all = "warn"
 pedantic = "warn"
+
+# One current source identity across direct and transitive operational contracts.
+[patch.crates-io]
+hat-specifications = { git = "https://github.com/hathq/hat-specifications", rev = "8123222df96a289e4f4a4aa0c605b94b1905a60b" }
