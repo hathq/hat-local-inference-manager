@@ -4,6 +4,7 @@ import json
 import os
 from pathlib import Path
 import subprocess
+import tempfile
 
 
 def gh(path):
@@ -24,8 +25,39 @@ def admit(identity, event, environment, policies, head, main, runs):
     require(review.get('reviewers'), 'native reviewer protection is required')
     require(environment['deployment_branch_policy']['custom_branch_policies'] is True)
     require(any(p['type'] == 'tag' and p['name'] == 'hat/v*' for p in policies['branch_policies']))
-    matching = [r for r in runs if r['head_sha'] == head and r['event'] == 'push' and r['head_branch'] == 'main']
-    require(matching and all(r['conclusion'] == 'success' for r in matching), 'every observed main push workflow must succeed')
+    paths = identity.get('required_workflows', [])
+    require(paths and len(paths) <= 16 and len(set(paths)) == len(paths), 'explicit owner workflows required')
+    for path in paths:
+        matching = [r for r in runs if r['head_sha'] == head and r['event'] == 'push'
+                    and r['head_branch'] == 'main' and r.get('path') == path]
+        require(matching, 'required main workflow missing')
+        key = lambda r: (r.get('run_number', 0), r.get('id', 0))
+        latest_key = max(map(key, matching))
+        latest = [r for r in matching if key(r) == latest_key]
+        require(all(r.get('status') == 'completed' and r['conclusion'] == 'success' for r in latest),
+                'latest required main workflow must succeed')
+
+
+def publish_once(repo, tag, head, directory):
+    paths = sorted(directory.iterdir())
+    existing = subprocess.run(['gh', 'api', f'repos/{repo}/releases/tags/{tag}'], capture_output=True, text=True)
+    if existing.returncode:
+        require('(HTTP 404)' in existing.stderr, 'release state unknown; no write')
+        require(os.environ.get('GITHUB_RUN_ATTEMPT') == '1', 'no blind write retry')
+        subprocess.run(['gh', 'release', 'create', tag, '--repo', repo, '--verify-tag', '--target', head,
+                        '--title', tag, '--notes', 'Owner-built Linux HAT. Installation still requires signed catalog trust.',
+                        *[str(p) for p in paths]], check=True)
+    else:
+        release = json.loads(existing.stdout)
+        require(not release.get('draft') and release.get('tag_name') == tag, 'release identity mismatch')
+    with tempfile.TemporaryDirectory() as temporary:
+        for path in paths:
+            subprocess.run(['gh', 'release', 'download', tag, '--repo', repo, '--pattern', path.name,
+                            '--dir', temporary], check=True)
+            observed = Path(temporary) / path.name
+            require(observed.stat().st_size == path.stat().st_size, 'released size mismatch')
+            require(hashlib.sha256(observed.read_bytes()).digest() == hashlib.sha256(path.read_bytes()).digest(),
+                    'released bytes mismatch')
 
 
 if __name__ == '__main__':
@@ -36,12 +68,19 @@ if __name__ == '__main__':
     main = subprocess.check_output(['git', 'rev-parse', 'origin/main'], text=True).strip()
     env = gh(f'repos/{repo}/environments/hat-public')
     policies = gh(f'repos/{repo}/environments/hat-public/deployment-branch-policies?per_page=100')
-    runs = gh(f'repos/{repo}/actions/runs?head_sha={head}&event=push&branch=main&per_page=100')['workflow_runs']
+    response = gh(f'repos/{repo}/actions/runs?head_sha={head}&event=push&branch=main&per_page=100')
+    runs = response['workflow_runs']
+    require(response['total_count'] == len(runs) and len(runs) < 100, 'partial main CI observation')
+    require(policies['total_count'] == len(policies['branch_policies']), 'partial environment policy')
     admit(identity, event, env, policies, head, main, runs)
     directory = Path(os.environ['HAT_RELEASE_DIRECTORY'])
     manifest = json.loads((directory / 'release.json').read_text())
+    descriptor = json.loads(Path('hat.package.json').read_text())
     require(manifest['repository'] == repo and manifest['source'] == head)
-    require(os.environ['GITHUB_REF_NAME'] == 'hat/v' + manifest['version'])
+    require(manifest['version'] == descriptor['version'] and manifest['package_id'] == identity['package_id'])
+    require((directory / 'hat.package.json').read_bytes() == Path('hat.package.json').read_bytes())
+    tag = os.environ['GITHUB_REF_NAME']
+    require(tag == 'hat/v' + manifest['version'])
     lines = (directory / 'SHA256SUMS').read_text().splitlines()
     require(len(lines) == 3)
     names = []
@@ -51,8 +90,4 @@ if __name__ == '__main__':
         names.append(name)
         require(hashlib.sha256((directory / name).read_bytes()).hexdigest() == digest)
     require(len(set(names)) == 3 and len(list(directory.iterdir())) == 4)
-    # --verify-tag never creates a missing tag; an existing Release is not replaced.
-    subprocess.run(['gh', 'release', 'create', os.environ['GITHUB_REF_NAME'], '--repo', repo, '--verify-tag',
-                    '--title', f"HAT {manifest['package_id']} {manifest['version']}",
-                    '--notes', 'Linux x86_64 build. SHA256SUMS and GitHub provenance bind this build; installation still requires the independently verified signed catalog and explicit local authorization.',
-                    *[str(p) for p in sorted(directory.iterdir())]], check=True)
+    publish_once(repo, tag, head, directory)
