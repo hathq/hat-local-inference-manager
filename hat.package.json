@@ -2,13 +2,13 @@
   "schema": "hathq://hat/package/v2",
   "package_id": "hat/local-inference-manager",
   "repository_id": "hat-local-inference-manager",
-  "version": "0.10.0",
+  "version": "0.10.1",
   "specification_version": "0.10.0",
   "manifest": {
     "schema": "hathq://hat/manifest/v1",
     "id": "hat/local-inference-manager",
     "name": "Local Inference Manager",
-    "version": "0.10.0",
+    "version": "0.10.1",
     "capabilities": [
       "local-inference-resource-inspection",
       "verified-local-model-lifecycle",

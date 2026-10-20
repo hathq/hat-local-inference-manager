@@ -2,5 +2,10 @@
   "repository": "hathq/hat-local-inference-manager",
   "github_id": 1400279102,
   "package_id": "hat/local-inference-manager",
-  "binary": "hat-local-inference-manager-worker"
+  "binary": "hat-local-inference-manager-worker",
+  "required_workflows": [
+    ".github/workflows/locked-source-tests.yml",
+    ".github/workflows/oss-policy.yml",
+    ".github/workflows/release-hat.yml"
+  ]
 }
